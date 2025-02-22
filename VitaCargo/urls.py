@@ -10,7 +10,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shop.urls')),
     path('', include('profile.urls')),
+    path('set_language/', set_language, name='set_language'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += i18n_patterns(
-    path('set_language/', 'django.views.i18n.set_language', name='set_language'),
-)
+
