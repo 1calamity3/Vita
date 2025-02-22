@@ -16,7 +16,7 @@ EMAIL_HOST_PASSWORD='ijgu vovu bpdw pato'
 EMAIL_IS_ACTIVE=True
 
 
-DEBUG = False
+DEBUG = True
 
 AUTH_USER_MODEL = 'profile.CustomUser'
 
