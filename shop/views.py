@@ -135,7 +135,7 @@ def email_sending(order, subject, request, template, status):
             subject=subject,
             body=plain_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            to=['kyrgyzpink@gmail.com', 'aikol.abdykadyrov22.08.00@gmail.com'],
+            to=['kyrgyzpink@gmail.com', 'aikol.abdykadyrov22.08.00@gmail.com']
         )
         message.attach_alternative(html_message, 'text/html')
         message.send()
