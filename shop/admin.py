@@ -1,27 +1,32 @@
 from django.contrib import admin
-from .models import Category, Product, Order, OrderItem, SubCategory
-from django.contrib import admin
+from django.urls import path, reverse
 from django.utils.html import format_html
-from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
-from .models import Product
+from django.utils.translation import gettext_lazy as _
 from django.http import HttpResponseRedirect
-from django.urls import path
-
-
-admin.site.register(Category)
-admin.site.register(SubCategory)
-admin.site.register(Order)
-admin.site.register(OrderItem)
-
+from .models import Product
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'duplicate_link')  # Show duplicate button in list
+    list_display = ('formatted_name', 'formatted_price', 'formatted_stock', 'duplicate_link')
+
+    def formatted_name(self, obj):
+        return obj.formatted_name
+
+    formatted_name.short_description = "Название"
+
+    def formatted_price(self, obj):
+        return obj.formatted_price
+
+    formatted_price.short_description = "Цена"
+
+    def formatted_stock(self, obj):
+        return obj.formatted_stock
+
+    formatted_stock.short_description = "В стоке"
 
     def duplicate_link(self, obj):
-        url = reverse('admin:shop_product_duplicate', args=[obj.pk])  # Use correct namespace
+        url = reverse('admin:shop_product_duplicate', args=[obj.pk])
         return format_html('<a href="{}" class="button">Duplicate</a>', url)
 
     duplicate_link.short_description = "Duplicate"
@@ -35,25 +40,8 @@ class ProductAdmin(admin.ModelAdmin):
 
     def duplicate_object_view(self, request, pk):
         obj = Product.objects.get(pk=pk)
-        obj.pk = None  # Reset PK to create a new object
+        obj.pk = None
         obj.save()
         self.message_user(request, _("Product duplicated successfully."))
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/admin/shop/product/'))
 
-
-class ProductModelAdmin(admin.ModelAdmin):
-    # ...
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('duplicate/<int:pk>/', self.admin_site.admin_view(self.duplicate_object_view), name="duplicate_object"),
-        ]
-        return custom_urls + urls
-
-    def duplicate_object_view(self, request, pk):
-        obj = Product.objects.get(pk=pk)
-        obj.pk = None
-        obj.save()
-        self.message_user(request, _("Object duplicated successfully."))
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
